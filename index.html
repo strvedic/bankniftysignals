@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Nifty Signals</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .signal { border: 1px solid #ddd; padding: 15px; margin: 10px; background: #f8f8f8; }
+        button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Live Bank Nifty Trading Signals</h1>
+    <button onclick="fetchSignals()">Refresh Signals</button>
+    <div id="signals">
+        {% for message in messages %}
+            <div class="signal">{{ message|safe }}</div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function fetchSignals() {
+            fetch('/get-signals')
+                .then(response => response.json())
+                .then(data => {
+                    let signalDiv = document.getElementById("signals");
+                    signalDiv.innerHTML = "";
+                    if (data.signals.length > 0) {
+                        data.signals.forEach(signal => {
+                            let div = document.createElement("div");
+                            div.className = "signal";
+                            div.innerHTML = signal;
+                            signalDiv.appendChild(div);
+                        });
+                    } else {
+                        signalDiv.innerHTML = "<p>No new signals.</p>";
+                    }
+                })
+                .catch(error => console.error("Error fetching signals:", error));
+        }
+    </script>
+</body>
+</html>
